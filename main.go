@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-
 	"github.com/gophercises/urlshort/maphandler"
 )
 
@@ -15,7 +14,18 @@ func main() {
 		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
 	}
 	mapHandler := maphandler.MapHandler(pathsToUrls, mux)
-	http.ListenAndServe(":8080", mapHandler)
+	yaml := `
+- path: /urlshort
+  url: https://github.com/gophercises/urlshort
+- path: /urlshort-final
+  url: https://github.com/gophercises/urlshort/tree/solution
+`
+	ymlHandler, err := maphandler.YMLHandler([]byte(yaml), mapHandler)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Server is running 8080")
+	http.ListenAndServe(":8080", ymlHandler)
 }
 
 func defaultMux() *http.ServeMux {
